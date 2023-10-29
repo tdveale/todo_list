@@ -83,7 +83,7 @@ def get_todo_items():
     todo_items = TodoItem.query.all()
     
     # loop through all todo items and create a new dictionary containing the id, created_at, updated_at, and title of each todo item
-    all_items = [{"id": todo_item.id, "created_at": todo_item.created_at, "updated_at": todo_item.updated_at, "title": todo_item.title} for todo_item in todo_items]
+    all_items = [{"id": todo_item.id, "created_at": todo_item.created_at, "updated_at": todo_item.updated_at, "title": todo_item.title, "details": todo_item.details} for todo_item in todo_items]
     
     # return a JSON response containing the list of todo items
     return jsonify(all_items)
