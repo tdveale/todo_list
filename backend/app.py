@@ -1,3 +1,6 @@
+# This file creates a Flask app and defines routes for creating, retrieving, and deleting todo items.
+# Currently responses (200) are returned but an error occurs when trying to access the database (I think)
+
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -7,7 +10,7 @@ app = Flask(__name__)
 
 # set the SQLAlchemy database URI to todo.db in the current directory
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
-# track modifications of objects and emit signals
+# track modifications of objects 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # initialize SQLAlchemy with the Flask app
@@ -30,7 +33,7 @@ class TodoItem(db.Model):
     details = db.Column(db.String(120), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
 @app.route("/todo_items/", methods=["POST"])
 def create_todo_item():
     """
@@ -43,21 +46,27 @@ def create_todo_item():
     # get the data from the request body
     data = request.get_json()
     
-    # create a new todo item with title
-    todo_item = TodoItem(title=data["title"])
+    # try to create a new todo item with title
+    try:
+        todo_item = TodoItem(title=data["title"])
+        # add the new todo item to the database and commit changes
+        db.session.add(todo_item)
+        db.session.commit()
+        
+        # create a new dictionary containing the id, created_at, updated_at, and title of the new todo item
+        new_item = {"id": todo_item.id, 
+                    "created_at": todo_item.created_at, 
+                    "updated_at": todo_item.updated_at, 
+                    "title": todo_item.title}
+          
+        # return a JSON response containing the new todo item
+        return jsonify(new_item)
     
-    # add the new todo item to the database and commit changes
-    db.session.add(todo_item)
-    db.session.commit()
+    # if there is an error, rollback the session and return an error message
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
     
-    # create a new dictionary containing the id, created_at, updated_at, and title of the new todo item
-    new_item = {"id": todo_item.id, 
-                "created_at": todo_item.created_at, 
-                "updated_at": todo_item.updated_at, 
-                "title": todo_item.title}
-    
-    # return a JSON response containing the new todo item
-    return jsonify(new_item)
 
 @app.route("/todo_items/", methods=["GET"])
 def get_todo_items():
