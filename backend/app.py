@@ -48,7 +48,7 @@ def create_todo_item():
     
     # try to create a new todo item with title
     try:
-        todo_item = TodoItem(title=data["title"])
+        todo_item = TodoItem(title=data["title"], details=data["details"])
         # add the new todo item to the database and commit changes
         db.session.add(todo_item)
         db.session.commit()
@@ -57,7 +57,8 @@ def create_todo_item():
         new_item = {"id": todo_item.id, 
                     "created_at": todo_item.created_at, 
                     "updated_at": todo_item.updated_at, 
-                    "title": todo_item.title}
+                    "title": todo_item.title,
+                    "details": todo_item.details}
           
         # return a JSON response containing the new todo item
         return jsonify(new_item)
