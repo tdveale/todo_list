@@ -2,12 +2,18 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+# create a new Flask app
 app = Flask(__name__)
+
+# set the SQLAlchemy database URI to todo.db in the current directory
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+# track modifications of objects and emit signals
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
+# initialize SQLAlchemy with the Flask app
 db = SQLAlchemy(app)
 
-
+# create a class for todo items
 class TodoItem(db.Model):
     """
     Represents a single item in a todo list.
@@ -33,16 +39,24 @@ def create_todo_item():
     Returns:
         A JSON object containing the newly created todo item's id, created_at, updated_at, and title.
     """
+    
+    # get the data from the request body
     data = request.get_json()
+    
+    # create a new todo item with title
     todo_item = TodoItem(title=data["title"])
+    
+    # add the new todo item to the database and commit changes
     db.session.add(todo_item)
     db.session.commit()
     
+    # create a new dictionary containing the id, created_at, updated_at, and title of the new todo item
     new_item = {"id": todo_item.id, 
                 "created_at": todo_item.created_at, 
                 "updated_at": todo_item.updated_at, 
                 "title": todo_item.title}
     
+    # return a JSON response containing the new todo item
     return jsonify(new_item)
 
 @app.route("/todo_items/", methods=["GET"])
@@ -53,10 +67,13 @@ def get_todo_items():
     Returns:
         A JSON response containing a list of all todo items in the database.
     """
+    # query database and retrieve all todo items
     todo_items = TodoItem.query.all()
     
+    # loop through all todo items and create a new dictionary containing the id, created_at, updated_at, and title of each todo item
     all_items = [{"id": todo_item.id, "created_at": todo_item.created_at, "updated_at": todo_item.updated_at, "title": todo_item.title} for todo_item in todo_items]
     
+    # return a JSON response containing the list of todo items
     return jsonify(all_items)
 
 
@@ -71,9 +88,16 @@ def delete_todo_item(task_id):
     Returns:
         A JSON response containing a message indicating whether the task was deleted successfully or an error message if the task was not found.
     """
+    # get the todo item with the given task_id
     task = TodoItem.query.get(task_id)
+    
+    # if the todo item does not exist, return an error message
     if task is None:
         return jsonify({"error": "Task not found"}), 404
+    
+    # delete the todo item from the database and commit changes
     db.session.delete(task)
     db.session.commit()
+    
+    # return a JSON response containing saying deletion was successful
     return jsonify({"message": "Task deleted successfully"})
