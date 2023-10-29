@@ -48,7 +48,7 @@ def create_todo_item():
     
     # try to create a new todo item with title
     try:
-        todo_item = TodoItem(title=data["title"], details=data["details"])
+        todo_item = TodoItem(title=data["title"])
         # add the new todo item to the database and commit changes
         db.session.add(todo_item)
         db.session.commit()
