@@ -70,23 +70,35 @@ def create_todo_item():
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
     
-
-@app.route("/todo_items/", methods=["GET"])
-def get_todo_items():
+@app.route("/todo_items/<int:todo_item_id>", methods=["GET"])
+def get_todo_item(todo_item_id):
     """
-    Retrieve all todo items from the database and return them as a JSON response.
+    Retrieve a single todo item by ID.
     
+    Args:
+        todo_item_id (int): The ID of the todo item to retrieve.
+        
     Returns:
-        A JSON response containing a list of all todo items in the database.
+        A JSON response containing the todo item's ID, creation and update timestamps, title, and details.
+        If the todo item is not found, returns a JSON response with an error message and a 404 status code.
     """
-    # query database and retrieve all todo items
-    todo_items = TodoItem.query.all()
     
-    # loop through all todo items and create a new dictionary containing the id, created_at, updated_at, and title of each todo item
-    all_items = [{"id": todo_item.id, "created_at": todo_item.created_at, "updated_at": todo_item.updated_at, "title": todo_item.title, "details": todo_item.details} for todo_item in todo_items]
+    # retrieve the todo item with the given todo_item_id
+    todo_item = TodoItem.query.get(todo_item_id)
     
-    # return a JSON response containing the list of todo items
-    return jsonify(all_items)
+    # if empty return error
+    if todo_item is None:
+        return jsonify({"error": "Todo item not found"}), 404
+    
+    # create dictionary for item id
+    item = {"id": todo_item.id, 
+            "created_at": todo_item.created_at, 
+            "updated_at": todo_item.updated_at, 
+            "title": todo_item.title, 
+            "details": todo_item.details}
+    
+    # return a JSON response containing the todo item
+    return jsonify(item)
 
 
 @app.route("/todo_items/<int:task_id>", methods=["DELETE"])
