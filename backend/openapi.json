@@ -1,0 +1,335 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Read Root",
+        "operationId": "read_root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo_items/": {
+      "get": {
+        "summary": "Read Items",
+        "operationId": "read_items_todo_items__get",
+        "parameters": [
+          {
+            "required": false,
+            "schema": {
+              "title": "Skip",
+              "type": "integer",
+              "default": 0
+            },
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "required": false,
+            "schema": {
+              "title": "Limit",
+              "type": "integer",
+              "default": 20
+            },
+            "name": "limit",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Response Read Items Todo Items  Get",
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TodoItem"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Item",
+        "operationId": "create_item_todo_items__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoItemCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoItem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todo_items/{item_id}": {
+      "get": {
+        "summary": "Read Item",
+        "operationId": "read_item_todo_items__item_id__get",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            },
+            "name": "item_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoItem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Item",
+        "operationId": "delete_item_todo_items__item_id__delete",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            },
+            "name": "item_id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Item",
+        "description": "Allow partial updates",
+        "operationId": "update_item_todo_items__item_id__patch",
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "title": "Item Id",
+              "type": "integer"
+            },
+            "name": "item_id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TodoItemUpdate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoItem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "title": "HTTPValidationError",
+        "type": "object",
+        "properties": {
+          "detail": {
+            "title": "Detail",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            }
+          }
+        }
+      },
+      "TodoItem": {
+        "title": "TodoItem",
+        "required": ["title"],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "title": "Updated At",
+            "type": "string",
+            "format": "date-time"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "details": {
+            "title": "Details",
+            "type": "string"
+          }
+        }
+      },
+      "TodoItemCreate": {
+        "title": "TodoItemCreate",
+        "required": ["title"],
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "details": {
+            "title": "Details",
+            "type": "string"
+          }
+        }
+      },
+      "TodoItemUpdate": {
+        "title": "TodoItemUpdate",
+        "required": ["title"],
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "details": {
+            "title": "Details",
+            "type": "string"
+          }
+        }
+      },
+      "ValidationError": {
+        "title": "ValidationError",
+        "required": ["loc", "msg", "type"],
+        "type": "object",
+        "properties": {
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
