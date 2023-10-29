@@ -34,7 +34,9 @@ class TodoItem(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+# endpoint to create a new todo item
 @app.route("/todo_items/", methods=["POST"])
+# could do authentication here with auth0 and @requires_auth decorator but I don't have experience of this
 def create_todo_item():
     """
     Create a new todo item.
