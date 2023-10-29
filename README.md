@@ -7,7 +7,7 @@ This repository contains code for a simple to do list application.
 
 ## Setup
 
-1. Clone the github repository.
+1. Clone the github repository: `git clone git@github.com:tdveale/todo_list.git`
 2. Install [Docker](https://www.docker.com).
 3. On the command line, navigate to to where you cloned the repository.
 4. Run the command: `docker compose up --build -d`
